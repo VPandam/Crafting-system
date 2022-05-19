@@ -26,70 +26,84 @@ public class CraftSystemManager : MonoBehaviour
         recipes = recipesManager.recipes;
     }
 
-    public void Craft()
+    public void CraftButtonClick()
     {
         Debug.Log("Craft");
+        //The elements in the slots
         List<Element> elementsToCraft = GetElementsFromSlots();
+        //A copy of the elements in the slots
+        List<Element> elementsToCraftCopy = new List<Element>(elementsToCraft);
 
+        Debug.Log(string.Join(" , ", elementsToCraftCopy));
+
+
+        //Sometimes more than one recipe will be able to be crafted with the elements in the slots
+        //We will craft the recipe that uses more elements.
+        int lessElementsRemainingAfterCrafting = int.MaxValue;
+        Recipe recipeToCraft = null;
 
         foreach (Recipe recipe in recipes)
         {
-            bool canBeCrafted = false;
-            bool[] necessaryElementsAvailable = new bool[recipe.elements.Length];
-            for (var i = 0; i < recipe.elements.Length; i++)
-            {
-                if (elementsToCraft.Contains(recipe.elements[i]))
-                {
-                    elementsToCraft.Remove(recipe.elements[i]);
-                    necessaryElementsAvailable[i] = true;
-                }
-            }
+            elementsToCraft = new List<Element>(elementsToCraftCopy);
+            bool canBeCrafted = CheckIfRecipeCanBeCrafted(recipe, elementsToCraft);
 
-            //If every bool is true, means that we have every element to craft the recipe
-            canBeCrafted = true;
-            foreach (bool boolElement in necessaryElementsAvailable)
-            {
-                Debug.Log(boolElement);
-                if (!boolElement)
-                    canBeCrafted = false;
-
-            }
-            //Update the slot elements after crafting
             if (canBeCrafted)
             {
-                Element[] elementsToCraftArray = new Element[craftSlots.Length];
-                int i = 0;
-                foreach (var element in elementsToCraft)
+                int ammountOfElementsRemainingAfterCrafting = RemoveUsedElementsFromSlots(recipe, elementsToCraft);
+                if (ammountOfElementsRemainingAfterCrafting < lessElementsRemainingAfterCrafting)
                 {
-                    elementsToCraftArray[i] = element;
-                    i++;
+                    lessElementsRemainingAfterCrafting = ammountOfElementsRemainingAfterCrafting;
+                    recipeToCraft = recipe;
                 }
-                Debug.Log(elementsToCraftArray.Length + "elementsToCraft has");
-                UpdateElementsOfSlots(elementsToCraftArray);
             }
 
             Debug.Log(recipe.name + " Can be crafted = " + canBeCrafted);
         }
 
+        Craft(recipeToCraft, elementsToCraftCopy);
+
     }
 
+    void Craft(Recipe recipe, List<Element> elementsToCraft)
+    {
+        RemoveUsedElementsFromSlots(recipe, elementsToCraft);
+        UpdateElementsOfSlots(elementsToCraft);
+        Debug.Log("Crafted: " + recipe.name);
+        UpdateResultSlot();
+    }
 
     /// <summary>
-    /// NO VA!!!!!!!!!!!!!!!!!!!!
+    /// Update the elements of the slots
     /// </summary>
-    /// <param name="elements"></param>
-    public void UpdateElementsOfSlots(Element[] elements)
+    /// <param name="newSlotElements"></param>
+    public void UpdateElementsOfSlots(List<Element> newSlotElements)
     {
+        //To set the elements of the slots we need an array of elements
+        //With the size of the number craftslots
+        //Thats because when the list has a null item doesnt count as a space in memory.
+        //We need to have the space in memory to say it is null 
+        Element[] elementsToCraftArray = new Element[craftSlots.Length];
+
+        //Set the elements of the array with the elements of the list
+        int i = 0;
+        foreach (var element in newSlotElements)
+        {
+            elementsToCraftArray[i] = element;
+            i++;
+        }
+
+        //Set the elements of the slots with the elements of the array
         int slotIndex = 0;
         foreach (Slot slot in craftSlots)
         {
-            Debug.Log(slotIndex + " Slot index " + elements.Length + "elements.count");
-
-
-            slot.SetElement(elements[slotIndex]);
-
+            slot.SetElement(elementsToCraftArray[slotIndex]);
             slotIndex++;
         }
+    }
+
+    void UpdateResultSlot()
+    {
+
     }
 
     /// <summary>
@@ -108,5 +122,40 @@ public class CraftSystemManager : MonoBehaviour
 
         }
         return elementsToCraft;
+    }
+
+    bool CheckIfRecipeCanBeCrafted(Recipe recipe, List<Element> elementsToCraft)
+    {
+        bool canBeCrafted = true;
+        for (var i = 0; i < recipe.elements.Length; i++)
+        {
+            if (elementsToCraft.Contains(recipe.elements[i]))
+            {
+                elementsToCraft.Remove(recipe.elements[i]);
+            }
+            else
+            {
+                canBeCrafted = false;
+            }
+        }
+        return canBeCrafted;
+    }
+
+    /// <summary>
+    /// Checks what elements are used in the recipe and remove them from the list.
+    /// </summary>
+    /// <param name="recipe"></param>
+    /// <param name="elementsToCraft"></param>
+    /// <returns></returns>
+    int RemoveUsedElementsFromSlots(Recipe recipe, List<Element> elementsToCraft)
+    {
+        for (var i = 0; i < recipe.elements.Length; i++)
+        {
+            if (elementsToCraft.Contains(recipe.elements[i]))
+            {
+                elementsToCraft.Remove(recipe.elements[i]);
+            }
+        }
+        return elementsToCraft.Count;
     }
 }

@@ -12,6 +12,6 @@ public class CraftButton : MonoBehaviour
     }
     public void Craft()
     {
-        craftSystemManager.Craft();
+        craftSystemManager.CraftButtonClick();
     }
 }
