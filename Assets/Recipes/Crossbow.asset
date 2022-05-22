@@ -12,5 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c4abbc6bc9d4cd44f90ceb74da048175, type: 3}
   m_Name: Crossbow
   m_EditorClassIdentifier: 
-  elements: []
-  result: {fileID: 0}
+  elements:
+  - {fileID: 11400000, guid: 31cc17405fd26a74aa5e115adbd77b83, type: 2}
+  - {fileID: 11400000, guid: b47397e7273d7bf47a4b6952b815a680, type: 2}
+  - {fileID: 11400000, guid: 21e987fe2780c2349884f23836c0221d, type: 2}
+  result: {fileID: 11400000, guid: ba39aa042d5929f428067755aaf50447, type: 2}

@@ -10,9 +10,9 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: c4abbc6bc9d4cd44f90ceb74da048175, type: 3}
-  m_Name: Bow
+  m_Name: Hat
   m_EditorClassIdentifier: 
   elements:
   - {fileID: 11400000, guid: 31cc17405fd26a74aa5e115adbd77b83, type: 2}
-  - {fileID: 11400000, guid: 21e987fe2780c2349884f23836c0221d, type: 2}
-  result: {fileID: 11400000, guid: f4e3616570a5e614096ff35b5e538c5e, type: 2}
+  - {fileID: 11400000, guid: 31cc17405fd26a74aa5e115adbd77b83, type: 2}
+  result: {fileID: 11400000, guid: e01eb9bf2ff811f46bf7b502ffc9d086, type: 2}

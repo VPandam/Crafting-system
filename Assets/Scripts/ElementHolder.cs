@@ -6,8 +6,7 @@ using UnityEngine.UI;
 
 public class ElementHolder : MonoBehaviour
 {
-    [SerializeField]
-    Element element;
+    public Element element;
 
     Image _image;
     public GameObject movingIcon;
@@ -26,8 +25,9 @@ public class ElementHolder : MonoBehaviour
     private void Awake()
     {
         _image = GetComponent<Image>();
-        _image.sprite = element.icon;
         canvas = GetComponentInParent<Canvas>();
+        if (element)
+            _image.sprite = element.icon;
     }
 
     private void Start()
@@ -77,8 +77,12 @@ public class ElementHolder : MonoBehaviour
             closerSlot.SetElement(element);
         }
         Destroy(movingIconInstance);
+    }
 
-
+    public void SetElement(Element newElement)
+    {
+        element = newElement;
+        _image.sprite = element.icon;
     }
 
 

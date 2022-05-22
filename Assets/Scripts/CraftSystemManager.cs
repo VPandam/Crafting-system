@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CraftSystemManager : MonoBehaviour
 {
@@ -9,8 +10,17 @@ public class CraftSystemManager : MonoBehaviour
     RecipesManager recipesManager;
     Recipe[] recipes;
 
+    [SerializeField]
+
     public Slot[] craftSlots;
 
+    public GameObject resultSlot;
+
+    List<Element> elementalElementsList = new List<Element>();
+    [SerializeField]
+    GameObject elementHolder;
+    [SerializeField]
+    GameObject elementalElementsGO;
 
     private void Awake()
     {
@@ -60,7 +70,18 @@ public class CraftSystemManager : MonoBehaviour
             Debug.Log(recipe.name + " Can be crafted = " + canBeCrafted);
         }
 
-        Craft(recipeToCraft, elementsToCraftCopy);
+        if (recipeToCraft)
+        {
+            Craft(recipeToCraft, elementsToCraftCopy);
+            
+            ///If the result of the recipe its never been crafted before
+            ///We add it to the elemental elements so we can craft with it.
+            if (!elementalElementsList.Contains(recipeToCraft.result))
+                UpdateElementalElements(recipeToCraft.result);
+        }
+        else
+            UpdateResultSlot(null);
+
 
     }
 
@@ -69,7 +90,7 @@ public class CraftSystemManager : MonoBehaviour
         RemoveUsedElementsFromSlots(recipe, elementsToCraft);
         UpdateElementsOfSlots(elementsToCraft);
         Debug.Log("Crafted: " + recipe.name);
-        UpdateResultSlot();
+        UpdateResultSlot(recipe.result);
     }
 
     /// <summary>
@@ -80,17 +101,10 @@ public class CraftSystemManager : MonoBehaviour
     {
         //To set the elements of the slots we need an array of elements
         //With the size of the number craftslots
-        //Thats because when the list has a null item doesnt count as a space in memory.
-        //We need to have the space in memory to say it is null 
         Element[] elementsToCraftArray = new Element[craftSlots.Length];
 
         //Set the elements of the array with the elements of the list
-        int i = 0;
-        foreach (var element in newSlotElements)
-        {
-            elementsToCraftArray[i] = element;
-            i++;
-        }
+        newSlotElements.CopyTo(elementsToCraftArray);
 
         //Set the elements of the slots with the elements of the array
         int slotIndex = 0;
@@ -101,8 +115,17 @@ public class CraftSystemManager : MonoBehaviour
         }
     }
 
-    void UpdateResultSlot()
+    void UpdateResultSlot(Element elementResult)
     {
+        Image resultSlotImage = resultSlot.GetComponent<Image>();
+
+        if (elementResult)
+        {
+            resultSlotImage.enabled = true;
+            resultSlotImage.sprite = elementResult.icon;
+        }
+        else
+            resultSlotImage.enabled = false;
 
     }
 
@@ -157,5 +180,21 @@ public class CraftSystemManager : MonoBehaviour
             }
         }
         return elementsToCraft.Count;
+    }
+
+    /// <summary>
+    /// Adds an element to the elemental element list and instantiate it
+    /// </summary>
+    /// <param name="recipe"></param>
+    void UpdateElementalElements(Element newElementalElement)
+    {
+        GameObject newElement = Instantiate(elementHolder, elementalElementsGO.transform.position,
+        elementHolder.transform.rotation, elementalElementsGO.transform);
+
+        ElementHolder newElementHolder = newElement.GetComponent<ElementHolder>();
+        newElementHolder.SetElement(newElementalElement);
+
+        elementalElementsList.Add(newElementalElement);
+
     }
 }

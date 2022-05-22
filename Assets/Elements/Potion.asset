@@ -10,7 +10,7 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: cd0982bf3a9ad6a489c8f5adac794cbd, type: 3}
-  m_Name: CrossBow
+  m_Name: Potion
   m_EditorClassIdentifier: 
-  icon: {fileID: 2951637857434867622, guid: f46bf2ed6eb9f8d428777e99fab1b8fb, type: 3}
-  _name: CrossBow
+  icon: {fileID: -6266780229262782353, guid: f46bf2ed6eb9f8d428777e99fab1b8fb, type: 3}
+  _name: Potion
